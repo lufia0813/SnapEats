@@ -16,6 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   String? _gender;
+  String? _goals;
 
   @override
   Widget build(BuildContext context) {
@@ -81,13 +82,32 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 30),
+            DropdownButtonFormField<String>(
+              value: _goals,
+              items: ["Gain Muscle", "Lose Fat"]
+                  .map((goals) => DropdownMenuItem<String>(
+                        value: goals,
+                        child: Text(goals),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _goals = value;
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: "Goals",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
                 double? height = double.tryParse(_heightController.text);
                 double? weight = double.tryParse(_weightController.text);
                 int? age = int.tryParse(_ageController.text);
 
-                if (height == null || weight == null || age == null || _gender == null) {
+                if (height == null || weight == null || age == null || _gender == null || _goals == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Please fill in all fields")),
                   );
@@ -95,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 }
 
                 // Save data to the global UserProfile instance
-                context.read<UserProfile>().updateProfile(height, weight, age, _gender!);
+                context.read<UserProfile>().updateProfile(height, weight, age, _gender!, _goals!,);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Details Saved")),
@@ -107,6 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 _ageController.clear();
                 setState(() {
                   _gender = null;
+                  _goals = null;
                 });
               },
               child: const Text("Save Details"),

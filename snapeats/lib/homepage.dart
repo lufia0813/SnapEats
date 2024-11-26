@@ -1,5 +1,3 @@
-// ignore_for_file: use_key_in_widget_constructors
-//Set up git for this project
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'user_profile.dart';
@@ -12,16 +10,29 @@ class HomePage extends StatelessWidget {
     // Calculate BMR (Basal Metabolic Rate) using the Mifflin-St Jeor equation.
     double bmr = 0;
     if (userProfile.gender == 'Male') {
-      bmr = 10 * (userProfile.weight ?? 70) + 6.25 * (userProfile.height ?? 175) - 5 * (userProfile.age ?? 25) + 5;
+      bmr = 10 * (userProfile.weight ?? 70) +
+          6.25 * (userProfile.height ?? 175) -
+          5 * (userProfile.age ?? 25) +
+          5;
     } else if (userProfile.gender == 'Female') {
-      bmr = 10 * (userProfile.weight ?? 70) + 6.25 * (userProfile.height ?? 175) - 5 * (userProfile.age ?? 25) - 161;
+      bmr = 10 * (userProfile.weight ?? 70) +
+          6.25 * (userProfile.height ?? 175) -
+          5 * (userProfile.age ?? 25) -
+          161;
     }
 
-    // Example static values for protein, carbs, and fat.
-    double protein = 50.0; // Can be updated dynamically if needed.
-    double carbs = 150.0; // Can be updated dynamically if needed.
-    double fat = 30.0; // Can be updated dynamically if needed.
-    double caloriesConsumed = bmr * 1.2; // Adjusted for sedentary activity level.
+    // Adjust calories based on the goal (Gain or Lose)
+    double calorieTarget = bmr * 1.2; // Sedentary activity level
+    if (userProfile.goals == 'Gain') {
+      calorieTarget *= 1.15; // 15% surplus
+    } else if (userProfile.goals == 'Lose') {
+      calorieTarget *= 0.85; // 15% deficit
+    }
+
+    // Calculate macronutrient targets (example distribution)
+    double protein = (calorieTarget * 0.3) / 4; // 30% of calories, 4 kcal per gram
+    double carbs = (calorieTarget * 0.5) / 4; // 50% of calories, 4 kcal per gram
+    double fat = (calorieTarget * 0.2) / 9; // 20% of calories, 9 kcal per gram
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +54,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Here’s your nutrition summary for today:',
+              'Your goal is to ${userProfile.goals ?? 'maintain weight'}. Here’s your nutrition summary for today:',
               style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
             const SizedBox(height: 16),
@@ -59,22 +70,22 @@ class HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Calories Consumed: ${caloriesConsumed.toStringAsFixed(0)} kcal',
+                      'Calories Target: ${calorieTarget.toStringAsFixed(0)} kcal',
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Protein: ${protein}g',
+                      'Protein: ${protein.toStringAsFixed(1)}g',
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Carbs: ${carbs}g',
+                      'Carbs: ${carbs.toStringAsFixed(1)}g',
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Fat: ${fat}g',
+                      'Fat: ${fat.toStringAsFixed(1)}g',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ],
