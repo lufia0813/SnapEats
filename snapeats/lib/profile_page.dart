@@ -107,6 +107,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 double? weight = double.tryParse(_weightController.text);
                 int? age = int.tryParse(_ageController.text);
 
+
+                //Check if inputs are correct or empty
                 if (height == null || weight == null || age == null || _gender == null || _goals == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Please fill in all fields")),
@@ -121,7 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SnackBar(content: Text("Details Saved")),
                 );
 
-                // Clear fields
+                // Clear fields after saving
                 _heightController.clear();
                 _weightController.clear();
                 _ageController.clear();
@@ -130,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _goals = null;
                 });
               },
-              child: const Text("Save Details"),
+              child: const Text("Save"),
             ),
           ],
         ),

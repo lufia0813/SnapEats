@@ -9,6 +9,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProfile = context.watch<UserProfile>();
 
+    //Varaibles 
+    //
+    //
+    //
     // Calculate BMR (Basal Metabolic Rate) using the Mifflin-St Jeor equation.
     double bmr = 0;
     double bmi = 0.0;
@@ -40,6 +44,11 @@ class HomePage extends StatelessWidget {
     double carbs = (calorieTarget * 0.5) / 4; // 50% of calories, 4 kcal per gram
     double fat = (calorieTarget * 0.2) / 9; // 20% of calories, 9 kcal per gram
 
+
+    //What you see on the screen 
+    //
+    //
+    //
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -137,6 +146,7 @@ class HomePage extends StatelessWidget {
   }
 
   // Food recommendation tile
+  // Need to change this part later for location and restaurant recommendation
   Widget buildFoodTile(String title, String subtitle) {
     return ListTile(
       leading: const Icon(Icons.restaurant, color: Colors.green),
