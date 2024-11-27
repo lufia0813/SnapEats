@@ -80,3 +80,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
+
+//THis is for testing committing to temp-branch so i dont keep messing up the code for main branch
+//try to push this to temp-branch
