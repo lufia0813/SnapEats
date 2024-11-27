@@ -56,7 +56,9 @@ class _CameraPageState extends State<CameraPage> {
             IconButton(
               iconSize: 80,
               //on press save the picture into file google drive? or backend databse
-              onPressed: (){},
+              onPressed: () async{
+                //XFile picture = await cameraController!.takePicture();
+              },
               icon: const Icon( Icons.camera, color: Colors.lightBlue,
               )
             ) 

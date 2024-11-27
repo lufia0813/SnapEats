@@ -10,6 +10,7 @@ import 'profile_page.dart';
 
 void main() {
   runApp(
+    
     ChangeNotifierProvider(
       create: (context) => UserProfile(), // Creating the instance of UserProfile
       child: const MyApp(),
@@ -38,7 +39,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [HomePage(),const CameraPage(),const MapPage(), const ProfilePage()];
+  final List<Widget> _pages = [const HomePage(),const CameraPage(),const MapPage(), const ProfilePage()];
 
   void _onItemTapped(int index) {
     setState(() {
