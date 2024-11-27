@@ -33,7 +33,8 @@ class HomePage extends StatelessWidget {
     
     // Adjust calories based on the goal (Gain or Lose)
     double calorieTarget = bmr * 1.2; // Sedentary activity level
-    if (userProfile.goals == 'Gain') {
+    print('This is the goals variable $userProfile.goals');
+    if (userProfile.goals == 'Gain Muscle') {
       calorieTarget *= 1.15; // 15% surplus
     } else if (userProfile.goals == 'Lose') {
       calorieTarget *= 0.85; // 15% deficit

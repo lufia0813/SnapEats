@@ -15,6 +15,7 @@ class UserProfile with ChangeNotifier {
     age = a;
     gender = g;
     goals = go;
+    print(go);
     notifyListeners(); // Notify listeners when data changes
   }
 }
