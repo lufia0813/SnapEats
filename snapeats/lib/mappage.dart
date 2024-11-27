@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'user_profile.dart';
+import 'dart:math';
 
 class MapPage extends StatefulWidget {
   @override
@@ -8,37 +9,65 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  String currentMode = "Lose Fat"; // Default mode
-  final Map<String, Map<String, double>> modes = {
-    "Lose Fat": {"calories": 0.5, "protein": 0.3, "distance": 0.2},
-    "Gain Muscle": {"calories": 0.3, "protein": 0.5, "distance": 0.2},
-    "Nearby": {"calories": 0.2, "protein": 0.3, "distance": 0.5},
-  };
-
   // Sample restaurant data
   List<Map<String, dynamic>> restaurants = [
-    {"name": "Healthy Bites", "calories": 450, "protein": 35, "distance": 1.5},
-    {"name": "Muscle Grill", "calories": 700, "protein": 50, "distance": 3.0},
-    {"name": "Veggie Delight", "calories": 300, "protein": 10, "distance": 0.8},
-    {"name": "Fast Food Express", "calories": 1000, "protein": 25, "distance": 2.5},
+    {"name": "Healthy Bites", "calories": 450, "protein": 35},
+    {"name": "Muscle Grill", "calories": 700, "protein": 50},
+    {"name": "Veggie Delight", "calories": 300, "protein": 10},
+    {"name": "Fast Food Express", "calories": 1000, "protein": 25},
+    {"name": "Rowans Canteen", "calories": 2000, "protein": 200},
   ];
 
   @override
   Widget build(BuildContext context) {
-    final userProfile = context.watch<UserProfile>();
+    final userProfile = context.watch<UserProfile>(); // Watch user profile for changes
 
-    // Function to calculate restaurant score based on the selected mode
-    double calculateScore(Map<String, dynamic> restaurant) {
-      Map<String, double> weights = modes[currentMode]!;
+    // Determine currentMode and weights based on the user's goal
+    String currentMode = userProfile.goals ?? "Lose Fat";  // Default to "Lose Fat" if no goal is set
+
+    // Weights based on goals
+    Map<String, Map<String, double>> modeWeights = {
+      "Lose Fat": {"calories": 0.7, "protein": 0.3},  // prioritize calories for fat loss
+      "Gain Muscle": {"calories": 0.4, "protein": 0.6}, // prioritize protein for muscle gain
+      "Maintain": {"calories": 0.5, "protein": 0.5}, // equal focus on both for maintenance
+    };
+
+    // Fetch user's macronutrient goals from the user profile
+    double proteinGoal = userProfile.proteinTarget ?? 50;  // Default protein goal
+    double calorieGoal = userProfile.calorieTarget ?? 500;  // Default calorie goal
+    double calorieWeight = modeWeights[currentMode]!["calories"] ?? 0.5;
+    double proteinWeight = modeWeights[currentMode]!["protein"] ?? 0.5;
+
+    // Function to calculate the squared difference and score for a restaurant
+    double calculateScore(Map<String, dynamic> restaurant, double calorieGoal, double proteinGoal, double calorieWeight, double proteinWeight) {
       double score = 0;
-      score += weights["calories"]! * (1000 - restaurant["calories"]) / 1000; // lower calories better
-      score += weights["protein"]! * restaurant["protein"] / 100; // higher protein better
-      score += weights["distance"]! * (1 / (1 + restaurant["distance"])); // shorter distance better
+
+      // Calorie score: lower calories are better
+      score += calorieWeight * pow((restaurant["calories"] - calorieGoal), 2);
+
+      // Protein score: higher protein is better
+      score += proteinWeight * pow((restaurant["protein"] - proteinGoal), 2);
       return score;
     }
 
     // Sort restaurants by score
-    restaurants.sort((a, b) => calculateScore(b).compareTo(calculateScore(a)));
+    List<Map<String, dynamic>> sortedRestaurants = List.from(restaurants);
+    sortedRestaurants.sort((a, b) {
+      double scoreA = calculateScore(a, calorieGoal, proteinGoal, calorieWeight, proteinWeight);
+      double scoreB = calculateScore(b, calorieGoal, proteinGoal, calorieWeight, proteinWeight);
+      return scoreA.compareTo(scoreB); // Sort in ascending order of score
+    });
+
+    // Calculate the maximum score for normalization
+    double maxScore = sortedRestaurants.isNotEmpty
+        ? calculateScore(sortedRestaurants[sortedRestaurants.length - 1], calorieGoal, proteinGoal, calorieWeight, proteinWeight)
+        : 1;
+
+    // Normalize the score to percentage (percent fit)
+    double calculatePercentFit(Map<String, dynamic> restaurant) {
+      double score = calculateScore(restaurant, calorieGoal, proteinGoal, calorieWeight, proteinWeight);
+      return 100-((score / maxScore) * 100); // Normalize to percentage
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -55,65 +84,44 @@ class _MapPageState extends State<MapPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Display user's goals at the top of the screen
-            if (userProfile.goals != null)
-              Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Your Goal: ${userProfile.goals}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+            Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Your Goals:",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text("Calorie Goal: $calorieGoal kcal", style: TextStyle(fontSize: 16)),
+                    Text("Protein Goal: $proteinGoal g", style: TextStyle(fontSize: 16)),
+                  ],
                 ),
               ),
-            const SizedBox(height: 16),
-            // Display current mode
-            Text(
-              "Mode: $currentMode",
-              style: const TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
+            // Display weight settings for decision making
             const Text(
               "Weights for Decision Making:",
               style: TextStyle(fontSize: 16),
             ),
-            ...modes[currentMode]!.entries.map(
-              (entry) => Text(
-                "${entry.key}: ${(entry.value * 100).toStringAsFixed(1)}%",
-                style: const TextStyle(fontSize: 14),
-              ),
-            ),
+            Text("Calorie Weight: ${(calorieWeight * 100).toStringAsFixed(1)}%", style: TextStyle(fontSize: 14)),
+            Text("Protein Weight: ${(proteinWeight * 100).toStringAsFixed(1)}%", style: TextStyle(fontSize: 14)),
             const SizedBox(height: 24),
-            // Dropdown for selecting the mode
-            DropdownButton<String>(
-              value: currentMode,
-              items: modes.keys
-                  .map((mode) => DropdownMenuItem<String>(
-                        value: mode,
-                        child: Text(mode),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    currentMode = value;
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 24),
-            // Display restaurant rankings based on the mode
+            // Display restaurant rankings based on the user profile and goals
             Expanded(
               child: ListView.builder(
-                itemCount: restaurants.length,
+                itemCount: sortedRestaurants.length,
                 itemBuilder: (context, index) {
-                  var restaurant = restaurants[index];
-                  double score = calculateScore(restaurant);
+                  var restaurant = sortedRestaurants[index];
+                  double percentFit = calculatePercentFit(restaurant);
+
                   return Card(
                     elevation: 3,
                     shape: RoundedRectangleBorder(
@@ -121,8 +129,24 @@ class _MapPageState extends State<MapPage> {
                     ),
                     child: ListTile(
                       title: Text(restaurant["name"]),
-                      subtitle: Text(
-                          "Calories: ${restaurant["calories"]}, Protein: ${restaurant["protein"]}g, Distance: ${restaurant["distance"]} km\nScore: ${score.toStringAsFixed(2)}"),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              "Calories: ${restaurant["calories"]}, Protein: ${restaurant["protein"]}g"),
+                          Text("Percent Fit: ${percentFit.toStringAsFixed(2)}%"),
+                          SizedBox(height: 8),
+                          // Circular Progress Indicator
+                          CircularProgressIndicator(
+                            value: percentFit / 100,
+                            strokeWidth: 8,
+                            backgroundColor: Colors.grey[300],
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              percentFit > 50 ? Colors.green : Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
