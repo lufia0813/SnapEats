@@ -7,7 +7,7 @@ class MapPage extends StatefulWidget {
   @override
   State<MapPage> createState() => _MapPageState();
 }
-
+//hallo
 class _MapPageState extends State<MapPage> {
   // Sample restaurant data
   List<Map<String, dynamic>> restaurants = [
@@ -15,7 +15,8 @@ class _MapPageState extends State<MapPage> {
     {"name": "Muscle Grill", "calories": 700, "protein": 50},
     {"name": "Veggie Delight", "calories": 300, "protein": 10},
     {"name": "Fast Food Express", "calories": 1000, "protein": 25},
-    {"name": "Rowans Canteen", "calories": 2000, "protein": 200},
+    {"name": "Rowans Canteen", "calories": 2000, "protein": 135},
+     {"name": "Timmys Canteen (not as good)", "calories": 1800, "protein": 200},
   ];
 
   @override
