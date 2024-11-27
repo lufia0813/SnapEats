@@ -53,10 +53,14 @@ class HomePage extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Your goal is to ${userProfile.goals ?? 'maintain weight'}. Here’s your nutrition summary for today:',
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            ),
+            if (userProfile.goals == null)
+              Text("Enter your profile to get started",
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]))
+            else 
+              Text(
+                'Your goal is to ${userProfile.goals }. Here’s your nutrition summary for today:',
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              ),
             const SizedBox(height: 16),
             // Nutrition Progress Card
             Card(
