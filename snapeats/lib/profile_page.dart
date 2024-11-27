@@ -34,6 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfile = context.read<UserProfile>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -82,10 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
             DropdownButtonFormField<String>(
               value: _gender,
               items: ["Male", "Female"]
-                  .map((gender) => DropdownMenuItem<String>(
-                        value: gender,
-                        child: Text(gender),
-                      ))
+                  .map((gender) => DropdownMenuItem<String>(value: gender, child: Text(gender)))
                   .toList(),
               onChanged: (value) {
                 setState(() {
@@ -101,10 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
             DropdownButtonFormField<String>(
               value: _goals,
               items: ["Gain Muscle", "Lose Fat"]
-                  .map((goals) => DropdownMenuItem<String>(
-                        value: goals,
-                        child: Text(goals),
-                      ))
+                  .map((goals) => DropdownMenuItem<String>(value: goals, child: Text(goals)))
                   .toList(),
               onChanged: (value) {
                 setState(() {
@@ -132,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 }
 
                 // Save data to the global UserProfile instance
-                context.read<UserProfile>().updateProfile(height, weight, age, _gender!, _goals!);
+                userProfile.updateProfile(height, weight, age, _gender!, _goals!);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Details Saved")),
