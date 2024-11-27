@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
     print('This is the goals variable $userProfile.goals');
     if (userProfile.goals == 'Gain Muscle') {
       calorieTarget *= 1.15; // 15% surplus
-    } else if (userProfile.goals == 'Lose') {
+    } else if (userProfile.goals == 'Lose Fat') {
       calorieTarget *= 0.85; // 15% deficit
     }
 
