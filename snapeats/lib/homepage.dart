@@ -3,12 +3,15 @@ import 'package:provider/provider.dart';
 import 'user_profile.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final userProfile = context.watch<UserProfile>();
 
     // Calculate BMR (Basal Metabolic Rate) using the Mifflin-St Jeor equation.
     double bmr = 0;
+    double bmi = 0.0;
     if (userProfile.gender == 'Male') {
       bmr = 10 * (userProfile.weight ?? 70) +
           6.25 * (userProfile.height ?? 175) -
@@ -21,6 +24,9 @@ class HomePage extends StatelessWidget {
           161;
     }
 
+    //calculate bmi  = weight/m^2
+    bmi  = (userProfile.weight ?? 1) / ((userProfile.height ?? 1) /100  * (userProfile.height ?? 1)/100 );
+    
     // Adjust calories based on the goal (Gain or Lose)
     double calorieTarget = bmr * 1.2; // Sedentary activity level
     if (userProfile.goals == 'Gain') {
@@ -37,11 +43,11 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Nutrition App',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'SnapEats',
+          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
         ),
         centerTitle: true,
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: const Color.fromARGB(255, 124, 189, 220),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -92,6 +98,18 @@ class HomePage extends StatelessWidget {
                       'Fat: ${fat.toStringAsFixed(1)}g',
                       style: const TextStyle(fontSize: 16),
                     ),
+                    const SizedBox(height: 8),
+                    if(bmi != 10000)
+                      Text(
+                        'BMI: ${bmi.toStringAsFixed(0)}',
+                        style: const TextStyle(fontSize: 16),
+                      )
+                    else
+                      const Text(
+                        'BMI: 0 ',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
