@@ -23,9 +23,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Profile",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
         ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 124, 189, 220),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
