@@ -1,4 +1,3 @@
-// profile_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'user_profile.dart';
@@ -7,7 +6,6 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -17,6 +15,22 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _ageController = TextEditingController();
   String? _gender;
   String? _goals;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile(); // Populate fields with saved data
+  }
+
+  void _loadUserProfile() {
+    final userProfile = context.read<UserProfile>();
+
+    _heightController.text = userProfile.height?.toString() ?? '';
+    _weightController.text = userProfile.weight?.toString() ?? '';
+    _ageController.text = userProfile.age?.toString() ?? '';
+    _gender = userProfile.gender;
+    _goals = userProfile.goals;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,8 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 double? weight = double.tryParse(_weightController.text);
                 int? age = int.tryParse(_ageController.text);
 
-
-                //Check if inputs are correct or empty
+                // Check if inputs are correct or empty
                 if (height == null || weight == null || age == null || _gender == null || _goals == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Please fill in all fields")),
@@ -119,20 +132,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 }
 
                 // Save data to the global UserProfile instance
-                context.read<UserProfile>().updateProfile(height, weight, age, _gender!, _goals!,);
+                context.read<UserProfile>().updateProfile(height, weight, age, _gender!, _goals!);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Details Saved")),
                 );
-
-                // Clear fields after saving
-                _heightController.clear();
-                _weightController.clear();
-                _ageController.clear();
-                setState(() {
-                  _gender = null;
-                  _goals = null;
-                });
               },
               child: const Text("Save"),
             ),
