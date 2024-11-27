@@ -9,47 +9,19 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProfile = context.watch<UserProfile>();
 
-    //Varaibles 
-    //
-    //
-    //
-    // Calculate BMR (Basal Metabolic Rate) using the Mifflin-St Jeor equation.
-    double bmr = 0;
+    // Get the goals and nutrition data from UserProfile
+    double calorieTarget = userProfile.getCalorieTarget;
+    double protein = userProfile.getProteinTarget;
+    double carbs = userProfile.getCarbsTarget;
+    double fat = userProfile.getFatTarget;
+
+    // Get BMI (if available in UserProfile)
     double bmi = 0.0;
-    if (userProfile.gender == 'Male') {
-      bmr = 10 * (userProfile.weight ?? 70) +
-          6.25 * (userProfile.height ?? 175) -
-          5 * (userProfile.age ?? 25) +
-          5;
-    } else if (userProfile.gender == 'Female') {
-      bmr = 10 * (userProfile.weight ?? 70) +
-          6.25 * (userProfile.height ?? 175) -
-          5 * (userProfile.age ?? 25) -
-          161;
+    if (userProfile.height != null && userProfile.weight != null) {
+      bmi = userProfile.weight! / ((userProfile.height! / 100) * (userProfile.height! / 100)); // BMI = weight / height^2 (in meters)
     }
 
-    //calculate bmi  = weight/m^2
-    bmi  = (userProfile.weight ?? 1) / ((userProfile.height ?? 1) /100  * (userProfile.height ?? 1)/100 );
-    
-    // Adjust calories based on the goal (Gain or Lose)
-    double calorieTarget = bmr * 1.2; // Sedentary activity level
-    print('This is the goals variable $userProfile.goals');
-    if (userProfile.goals == 'Gain Muscle') {
-      calorieTarget *= 1.15; // 15% surplus
-    } else if (userProfile.goals == 'Lose Fat') {
-      calorieTarget *= 0.85; // 15% deficit
-    }
-
-    // Calculate macronutrient targets (example distribution)
-    double protein = (calorieTarget * 0.3) / 4; // 30% of calories, 4 kcal per gram
-    double carbs = (calorieTarget * 0.5) / 4; // 50% of calories, 4 kcal per gram
-    double fat = (calorieTarget * 0.2) / 9; // 20% of calories, 9 kcal per gram
-
-
-    //What you see on the screen 
-    //
-    //
-    //
+    // What you see on the screen
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -70,11 +42,13 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             if (userProfile.goals == null)
-              Text("Enter your profile to get started",
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]))
+              Text(
+                "Enter your profile to get started",
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              )
             else 
               Text(
-                'Your goal is to ${userProfile.goals }. Here’s your nutrition summary for today:',
+                'Your goal is to ${userProfile.goals}. Here’s your nutrition summary for today:',
                 style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
             const SizedBox(height: 16),
@@ -109,7 +83,7 @@ class HomePage extends StatelessWidget {
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
-                    if(bmi != 10000)
+                    if (bmi != 10000) // Only show BMI if it's valid
                       Text(
                         'BMI: ${bmi.toStringAsFixed(0)}',
                         style: const TextStyle(fontSize: 16),
