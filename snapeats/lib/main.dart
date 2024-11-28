@@ -11,7 +11,8 @@ import 'profile_page.dart';
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (context) => UserProfile(), // Creating the instance of UserProfile
+      create: (context) =>
+          UserProfile(), // Creating the instance of UserProfile
       child: const MyApp(),
     ),
   );
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//hi
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -38,7 +40,13 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [HomePage(),const CameraPage(), MapPage(), const ProfilePage()];
+
+  final List<Widget> _pages = [
+    const HomePage(),
+    const CameraPage(),
+    MapPage(),
+    const ProfilePage()
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -53,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, 
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -76,3 +84,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
+
+//THis is for testing committing to temp-branch so i dont keep messing up the code for main branch
+//try to push this to temp-branch

@@ -21,7 +21,6 @@ class HomePage extends StatelessWidget {
       bmi = userProfile.weight! / ((userProfile.height! / 100) * (userProfile.height! / 100)); // BMI = weight / height^2 (in meters)
     }
 
-    // What you see on the screen
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -99,20 +98,21 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Recommendations
+
+            // Recommendations (Breakfast, Lunch, Dinner)
             const Text(
               'Recommendations for You:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Expanded(
-              child: ListView(
-                children: [
-                  buildFoodTile('Grilled Chicken Salad', 'High protein, low carbs'),
-                  buildFoodTile('Avocado Toast', 'Balanced and nutritious'),
-                  buildFoodTile('Smoothie Bowl', 'Rich in vitamins'),
-                ],
-              ),
+
+            // Meal tiles: Breakfast, Lunch, Dinner
+            Column(
+              children: [
+                buildMealTile(context, 'Breakfast', 'Start your day right', Icons.breakfast_dining),
+                buildMealTile(context, 'Lunch', 'Midday fuel', Icons.lunch_dining),
+                buildMealTile(context, 'Dinner', 'End the day strong', Icons.dinner_dining),
+              ],
             ),
           ],
         ),
@@ -120,13 +120,25 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Food recommendation tile
-  // Need to change this part later for location and restaurant recommendation
-  Widget buildFoodTile(String title, String subtitle) {
-    return ListTile(
-      leading: const Icon(Icons.restaurant, color: Colors.green),
-      title: Text(title),
-      subtitle: Text(subtitle),
+  // Build meal tile for Breakfast, Lunch, Dinner
+  Widget buildMealTile(BuildContext context, String title, String subtitle, IconData icon) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(icon, color: const Color.fromARGB(255, 124, 189, 220)),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(subtitle),
+        onTap: () {
+          // Implement logic for meal tracking, such as viewing details or adding items
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Tracking $title...')),
+          );
+        },
+      ),
     );
   }
 }

@@ -7,6 +7,7 @@ class UserProfile extends ChangeNotifier {
   String? gender;
   String? goals;
 
+
   // Initialize as nullable with a fallback
   double? calorieTarget = 0;
   double? proteinTarget = 0;
@@ -22,6 +23,7 @@ class UserProfile extends ChangeNotifier {
 
     _calculateTargets();
     notifyListeners(); // Notify listeners about the changes
+
   }
 
   void _calculateTargets() {

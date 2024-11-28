@@ -3,6 +3,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
+
+String folderID = '19RodOunE2_aKMeh7ldEK_vYmRMHSBl_U';
+
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
 
@@ -56,7 +59,9 @@ class _CameraPageState extends State<CameraPage> {
             IconButton(
               iconSize: 80,
               //on press save the picture into file google drive? or backend databse
-              onPressed: (){},
+              onPressed: () async {
+                //XFile picture = await cameraController!.takePicture();
+              },
               icon: const Icon( Icons.camera, color: Colors.lightBlue,
               )
             ) 
