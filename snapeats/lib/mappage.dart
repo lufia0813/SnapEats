@@ -2,22 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'user_profile.dart';
 import 'dart:math';
+import 'package:google_maps_flutter/google_maps_flutter.dart'; // Import Google Maps package
 
 class MapPage extends StatefulWidget {
   @override
   State<MapPage> createState() => _MapPageState();
 }
-//hallo
+
 class _MapPageState extends State<MapPage> {
   // Sample restaurant data
   List<Map<String, dynamic>> restaurants = [
-    {"name": "Healthy Bites", "calories": 450, "protein": 35},
-    {"name": "Muscle Grill", "calories": 700, "protein": 50},
-    {"name": "Veggie Delight", "calories": 300, "protein": 10},
-    {"name": "Fast Food Express", "calories": 1000, "protein": 25},
-    {"name": "Rowans Canteen", "calories": 2000, "protein": 135},
-     {"name": "Timmys Canteen (not as good)", "calories": 1800, "protein": 200},
+    {"name": "Healthy Bites", "calories": 450, "protein": 35, "latitude": 37.7749, "longitude": -122.4194},
+    {"name": "Muscle Grill", "calories": 700, "protein": 50, "latitude": 37.7849, "longitude": -122.4294},
+    {"name": "Veggie Delight", "calories": 300, "protein": 10, "latitude": 37.7949, "longitude": -122.4394},
+    {"name": "Fast Food Express", "calories": 1000, "protein": 25, "latitude": 37.8049, "longitude": -122.4494},
+    {"name": "Rowans Canteen", "calories": 2000, "protein": 135, "latitude": 37.8149, "longitude": -122.4594},
+    {"name": "Timmys Canteen (not as good)", "calories": 1800, "protein": 200, "latitude": 37.8249, "longitude": -122.4694},
   ];
+
+  late GoogleMapController _controller;  // Controller for Google Map
+  Set<Marker> _markers = {};  // Set to store restaurant markers
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the markers for each restaurant
+    for (var restaurant in restaurants) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(restaurant["name"]),
+          position: LatLng(restaurant["latitude"], restaurant["longitude"]),
+          infoWindow: InfoWindow(title: restaurant["name"]),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,14 +161,26 @@ class _MapPageState extends State<MapPage> {
                             value: percentFit / 100,
                             strokeWidth: 8,
                             backgroundColor: Colors.grey[300],
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              percentFit > 50 ? Colors.green : Colors.red,
-                            ),
+                            valueColor: AlwaysStoppedAnimation<Color>(percentFit > 50 ? Colors.green : Colors.red),
                           ),
                         ],
                       ),
                     ),
                   );
+                },
+              ),
+            ),
+            // Google Map view at the bottom
+            Container(
+              height: 300,
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(37.7749, -122.4194), // Default to a central location (San Francisco)
+                  zoom: 12,
+                ),
+                markers: _markers,
+                onMapCreated: (GoogleMapController controller) {
+                  _controller = controller;
                 },
               ),
             ),
